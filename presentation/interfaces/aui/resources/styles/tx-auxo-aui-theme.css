@@ -1,0 +1,128 @@
+@CHARSET "utf-8";
+
+/** generals ------------------------------------------------------------------ **/
+.aui {
+	font-family: arial, sans-serif;
+}
+
+/** forms & elements ---------------------------------------------------------- **/
+.aui .tx-auxo-aui-form-title {
+	border-bottom: 2px solid #7DB5DE;
+	padding-left: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
+	font-size: 1.2em;
+	letter-spacing: 1px;
+	color: #0069C1;
+}
+
+
+/** controls **/
+
+/** buttons ------------------------------------------------------------------ **/
+.aui .tx-auxo-aui-link-button {
+	background:transparent url(/typo3conf/ext/auxo/presentation/interfaces/aui/resources/assets/button.gif) repeat-x scroll 0pt;
+	border-left: 1px solid #7DB5DE;
+	border-right: 1px solid #7DB5DE;
+	height: 16px;
+	width: 100px;
+	display: block;
+	float: left;
+	margin:auto;
+	text-align: center;
+	padding: 2px;
+}
+
+.aui .tx-auxo-aui-link-button a {
+	color: #00429F;
+	text-decoration: none;
+	font-family: arial, sans-serif;
+	font-size: 0.8em;
+	border: 0pt;
+	padding: 0pt;
+	background-color: transparent;
+	cursor: pointer;
+}	
+
+
+.aui .tx-auxo-aui-form-button {
+	background:transparent url(/typo3conf/ext/auxo/presentation/interfaces/aui/resources/assets/button.gif) repeat-x scroll 0pt;
+	border-left: 1px solid #7DB5DE;
+	border-right: 1px solid #7DB5DE;
+	padding: 2px;
+	height: 16px;
+	width: 100px;
+	display: block;
+	float: left;
+	margin:auto;
+	text-align: center;
+}
+
+.aui .tx-auxo-aui-form-button button {
+	color: #00429F;
+	text-decoration: none;
+	font-family: arial, sans-serif;
+	font-size: 0.8em;
+	border: 0pt;
+	padding: 0pt;
+	background: transparent;
+	cursor: pointer;
+}
+
+/** checkboxes ---------------------------------------------------------------- **/
+.aui .tx-auxo-aui-checkbox-label {
+	margin-left: 0.25em;
+}
+
+/** radiobuttons --------------------------------------------------------------- **/
+.aui .tx-auxo-aui-radiobutton-label {
+	margin-left: 0.25em;
+}
+
+/** layouts ------------------------------------------------------------------- **/
+.aui .tx-auxo-aui-grid-layout {
+	border: 0px none;
+}
+
+.aui .tx-auxo-aui-grid-layout td {
+	border: 0px none;
+	padding: 0.5em;
+	margin: 0pt;
+}
+
+.aui .tx-auxo-aui-grid-layout p {
+	margin: 0pt;
+}
+
+/** forms ---------------------------------------------------------------------- **/
+.aui .tx-auxo-aui-input-error {
+	color: #e80101;
+	font-size: 0.8em;
+}
+
+/** special panels ------------------------------------------------------------- **/
+.aui .tx-auxo-aui-log-panel {
+	border: 1px solid grey;
+	background-color: white;
+	padding-left: 0.25em;
+	padding-right: 0.25em;
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	height: 300px;
+	width: 300px;
+	z-index: 50000;
+	overflow: auto;
+}
+
+.aui .tx-auxo-aui-log-panel-title {
+	background-color: darkgrey;
+	color: white;
+}
+
+.aui .tx-auxo-aui-log-panel-entry {
+	color: darkblue;
+	background-color: white;
+	fontsize: 9pt;
+}
