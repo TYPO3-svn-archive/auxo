@@ -44,7 +44,7 @@ class tx_auxo_aui_gridLayout extends tx_auxo_aui_layout {
 		$this->rows = $columns;
 	}
 	
-	public function render($items) {		
+	public function render(tx_auxo_aui_renderer $renderer, $items) {		
 		$content = '';
 		$row = 1;
 		$column = 1;
@@ -62,12 +62,12 @@ class tx_auxo_aui_gridLayout extends tx_auxo_aui_layout {
 				if ($item->getType() == tx_auxo_aui_hiddenField::HIDDEN_FIELD) {
 					continue;	
 				}
-				$renderedColumns .= $this->renderColumn($item, $column++);		
+				$renderedColumns .= $this->renderColumn($renderer, $item, $column++);		
 			}
 
-			$content .= $this->renderRow($renderedColumns, $row++);				
+			$content .= $this->renderRow($renderer, $renderedColumns, $row++);				
 		}
-		return tx_auxo_aui_toolbox::renderTag($this, 'table', array('class' => 'tx-auxo-aui-'. $this->type), $content);
+		return $renderer->renderTag($this, 'table', array('class' => 'tx-auxo-aui-'. $this->type), $content);
 	}	
 
 	/**
@@ -77,13 +77,13 @@ class tx_auxo_aui_gridLayout extends tx_auxo_aui_layout {
 	 * @param int		$column	column number
 	 * @return string	$content rendered column as string
 	 */
-	protected function renderColumn($item, $column) {
+	protected function renderColumn(tx_auxo_aui_renderer $renderer, $item, $column) {
 		$options['class'] = array('tx-auxo-aui-grid-column');
 		$options['class'][] = $column % 2 == 0 ? 'tx-auxo-aui-grid-column-even' : 'tx-auxo-aui-grid-column-odd';	
 		if ($column == 1) $options['class'][] = 'tx-auxo-aui-grid-column-first';
 		if ($column == $this->columns) $options['class'][] = 'tx-auxo-aui-grid-column-last';
 		
-		return tx_auxo_aui_toolbox::renderTag($this, 'td', $options, $item->render());
+		return $renderer->renderTag($this, 'td', $options, $item->render($renderer));
 	}
 
 	/**
@@ -93,13 +93,13 @@ class tx_auxo_aui_gridLayout extends tx_auxo_aui_layout {
 	 * @param int		$row		row number
 	 * @return string	$content	rendered row as string
 	 */
-	protected function renderRow($content, $row) {
+	protected function renderRow(tx_auxo_aui_renderer $renderer, $content, $row) {
 	    $options['class'] = array('tx-auxo-aui-grid-row');				
 		$options['class'][] = $row % 2 == 0 ? 'tx-auxo-aui-grid-row-even' : 'tx-auxo-aui-grid-row-odd';
 		if ($row == 1) $options['class'][]= 'tx-auxo-aui-grid-row-first';
 		if ($row == $this->rows) $options['class'][] = 'tx-auxo-aui-grid-row-last';
 		
-		return tx_auxo_aui_toolbox::renderTag($this, 'tr', $options, $content);
+		return $renderer->renderTag($this, 'tr', $options, $content);
 	}
 }
 ?>

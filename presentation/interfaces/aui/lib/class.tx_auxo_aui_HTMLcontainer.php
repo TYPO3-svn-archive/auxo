@@ -1,28 +1,36 @@
 <?php
+/*                                                                        *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
+ *                                                                        *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *	
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        */	
+
 /**
  * @package auxo
- * @subpackage ui
- * @author Andreas Horn <Andreas.Horn@extronaut.de>
- * @copyright 2007
- * @version $Version$
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- **/
- 
+ * @subpackage presentation
+ * @version $Id$
+ */
+
+/**	
+ * AUI Container
+ * 
+ * This class represents an abstract container in that components could be placed. Following
+ * concrete container implementation exist currently form, panel, tabview.
+ * 
+ * @package auxo
+ * @subpackage presentation
+ * @version $Id$	
+ * @copyright Copyright belongs to the respective authors
+ * @author andreas.horn@extronaut.de
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
 abstract class tx_auxo_aui_HTMLcontainer extends tx_auxo_aui_HTMLdynamicComponent {
 	
 	/**
@@ -31,6 +39,7 @@ abstract class tx_auxo_aui_HTMLcontainer extends tx_auxo_aui_HTMLdynamicComponen
 	
 	const FORM = 'form';
 	const PANEL = 'panel';
+	const MODULE = 'module';
 	
 	/**
 	 *
@@ -39,19 +48,43 @@ abstract class tx_auxo_aui_HTMLcontainer extends tx_auxo_aui_HTMLdynamicComponen
 	protected	$layout = NULL;
 	protected 	$theme =  NULL;
 	
-	public function __construct($layout=NULL, $theme='aui') {		
+	/**
+	 * Create a new container widget
+	 *
+	 * @param string $name
+	 * @param tx_auxo_aui_layout $layout
+	 * @param string $theme
+	 */
+	public function __construct($name, tx_auxo_aui_layout $layout=NULL, $theme='aui') {	
+		parent::__construct($name);	
 		$this->layout = !$layout ? new tx_auxo_aui_flowLayout() : $layout;
 		$this->theme = new tx_auxo_aui_theme($theme);
 	}
-	
+		
+	/**
+	 * Sets a layout manager
+	 *
+	 * @param tx_auxo_aui_layout $layout
+	 */
 	public function setLayout($layout) {
 		$this->layout = $layout;
-	}
-
+	}	
+	
+	/**
+	 * Returns current layout manager
+	 *
+	 * @return tx_auxo_aui_layout $layout
+	 */
 	public function getLayout() {
 		return $this->layout;
 	}
 
+	/**
+	 * Adds a new UI element to this container
+	 *
+	 * @param mixed $item
+	 * @param array $options
+	 */
 	public function add($item, $options=array()) {
 		if (!is_object($item)) {
 			throw new tx_auxo_presentationException('only add objects to container');
@@ -60,7 +93,12 @@ abstract class tx_auxo_aui_HTMLcontainer extends tx_auxo_aui_HTMLdynamicComponen
 		$item->setContainer($this);
 	}
 	
-	public function delete($item) {
+	/**
+	 * Removes an UI element from this container
+	 *
+	 * @param string $item name of UI element
+	 */
+	public function remove($item) {
 		unset($this->items[$item]);
 	}
 	
@@ -69,27 +107,23 @@ abstract class tx_auxo_aui_HTMLcontainer extends tx_auxo_aui_HTMLdynamicComponen
 	 *
 	 * @return $content rendered string
 	 */
-	public function renderItems() {
+	public function renderItems(tx_auxo_aui_renderer $renderer) {
 	    if (!$this->layout) {
 	    	throw new tx_auxo_presentationException('no layout manager defined');
 	    }
-	    return $this->layout->render($this->items);				
+	    return $this->layout->render($renderer, $this->items);				
 	}
-	
-	public function getIterator() {
 
-	}
+	
 	/**
 	 * This is an default implementation of how to render an container with controls
 	 *
 	 * @return string $output rendered output
 	 */
-	public function render($content='') {
+	public function render(tx_auxo_aui_renderer $renderer, $content='') {
 	 	if (!$this->getContainer()) {
-	 		$fullpath = $this->theme->getStyleSheetPath('tx-auxo-aui-theme.css');
-	 		tx_auxo_aui_toolbox::addStyleSheet($fullpath, '', 'text/css');
 		    $options['class'] = $this->theme->getName();		
-		    return tx_auxo_aui_toolbox::renderTag($this, 'div', $options, $content);	
+		    return $renderer->renderTag($this, 'div', $options, $content);	
 		}
 		
 		return $content;

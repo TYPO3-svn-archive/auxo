@@ -45,12 +45,12 @@ class tx_auxo_aui_radiobutton extends tx_auxo_aui_HTMLcomponent {
 		$this->value = $value;
 	}
 	
-	public function	render() {
+	public function	render(tx_auxo_aui_renderer $renderer) {
 		$options['name'] = $this->name;
 		$options['value'] = $this->value;
 		$options['type'] = 'radio';
 		if ($this->value) $options['checked'] = 'checked';
-		return tx_auxo_native_toolbox::renderTag($this, 'input', $options) . $this->label;
+		return $renderer->renderTag($this, 'input', $options) . $this->label;
 	}
 }
 

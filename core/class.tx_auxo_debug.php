@@ -63,7 +63,8 @@ class tx_auxo_debug {
   /**
    * tx_auxo_debug::dump()
    *
-   * @param mixed $object
+   * @param mixed $object object to dump
+   * @param string $label description for output
    * @return void
    */
 	public static function dump($object, $label='') {

@@ -44,15 +44,15 @@ class tx_auxo_panelLogger {
 	static public function render() {
 		$theme = new tx_auxo_aui_theme('aui');
 		$fullpath = $theme->getStyleSheetPath('tx-auxo-aui-theme.css');
-	    tx_auxo_aui_toolbox::addStyleSheet($fullpath, '', 'text/css');
+	    tx_auxo_aui_helper::addStyleSheet($fullpath, '', 'text/css');
 	    // generate panel
-		$content = tx_auxo_aui_toolbox::getTag('h3', array('class' => 'tx-auxo-aui-log-panel-title'), 'Developer Panel');
+		$content = tx_auxo_aui_helper::getTag('h3', array('class' => 'tx-auxo-aui-log-panel-title'), 'Developer Panel');
 		foreach(self::$messages as $text) {
-			$content .= tx_auxo_aui_toolbox::getTag('div', array('class' => 'tx-auxo-aui-log-panel-entry'), $text );
+			$content .= tx_auxo_aui_helper::getTag('div', array('class' => 'tx-auxo-aui-log-panel-entry'), $text );
 		}
 		
-		$panel = tx_auxo_aui_toolbox::getTag('div', array('class' => 'tx-auxo-aui-log-panel'), $content);
-		return tx_auxo_aui_toolbox::getTag('div', array('class' => 'aui'), $panel);	
+		$panel = tx_auxo_aui_helper::getTag('div', array('class' => 'tx-auxo-aui-log-panel'), $content);
+		return tx_auxo_aui_helper::getTag('div', array('class' => 'aui'), $panel);	
 	}
 }
 

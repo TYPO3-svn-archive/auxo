@@ -22,11 +22,12 @@
  ****************************************************************************/
 
 /**
- * This interfaces is used to implement and observer/observable pattern.
- * It is used mainly in model classes.
+ * This interfaces is used to implement and observer/observable pattern. A class
+ * implementing this interface is offers methods register or remove listener to events
+ * triggered by this class.
  *
  * @package 	auxo
- * @subpackage	util
+ * @subpackage	core
  * @author 		Andreas Horn
  * @copyright 	2007
  * @version 	$Id$
@@ -34,12 +35,27 @@
  */
  
 interface tx_auxo_observable {
-	public function addListener($event, $listener);
-	public function removeListener($listener);
+	/**
+	 * Adds a listener to a observable class
+	 *
+	 * @param string $event event to listen to
+	 * @param tx_auxo_observer $listener instance of a listener that implements tx_auxo_observer
+	 */
+	public function addListener($event, tx_auxo_observer $listener);
+	
+	/**
+	 * Removes a listener for a given event from a obserable class
+	 *
+	 * @param tx_auxo_observer $listener instance of a listener that implements tx_auxo_observer
+	 * @return boolen $removed true if removed
+	 */
+	public function removeListener($event, tx_auxo_observer $listener);
+	
+	/**
+	 * Triggers an event and informed all registered listener that listen to 
+	 *
+	 * @param string $event
+	 */
  	public function triggerEvent($event);	
-}
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/auxo/class.tx_auxo_observable.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/auxo/class.tx_auxo_observable.php']);
 }
 ?>

@@ -44,10 +44,10 @@ class tx_auxo_aui_upload extends tx_auxo_aui_text {
 		return $this->path;
 	}
 		
-	public function	render() {
+	public function	render(tx_auxo_aui_renderer $renderer) {
 		$options['name'] = $this->name;
 		$options['type'] = 'file';
-		return tx_auxo_aui_toolbox::renderTag($this, 'input', $options, $this->path);		
+		return $renderer->renderTag($this, 'input', $options, $this->path);		
 	}
 }
 

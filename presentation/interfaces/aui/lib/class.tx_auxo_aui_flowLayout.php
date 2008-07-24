@@ -34,7 +34,7 @@ class tx_auxo_aui_flowLayout extends tx_auxo_aui_layout {
 	public function __construct() {
 	}
 	
-	public function render($items) {		
+	public function render(tx_auxo_aui_renderer $renderer, $items) {		
 		$content = '';
 		
 		foreach ($items as $item) {
@@ -42,9 +42,9 @@ class tx_auxo_aui_flowLayout extends tx_auxo_aui_layout {
 				throw new tx_auxo_presentationException('container contains non object');
 			}
 			
-			$content.= $item->render();				
+			$content.= $item->render($renderer);				
 		}
-		return tx_auxo_aui_toolbox::renderTag($this, 'div', array(), $content);
+		return $renderer->renderTag($this, 'div', array(), $content);
 	}	
 }
 ?>

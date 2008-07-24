@@ -47,11 +47,11 @@ class tx_auxo_aui_textarea extends tx_auxo_aui_HTMLcomponent {
 		$this->columns = $columns;
 	}
 	
- 	public function	render() {
+ 	public function	render(tx_auxo_aui_renderer $renderer) {
 		$options['name'] = $this->name;
 		$options['rows'] = $this->rows;
 		$options['cols'] = $this->columns;
-		return tx_auxo_native_toolbox::renderTag($this, 'textarea', $options, $this->value);
+		return $renderer->renderTag($this, 'textarea', $options, $this->value);
 	}
 }
 

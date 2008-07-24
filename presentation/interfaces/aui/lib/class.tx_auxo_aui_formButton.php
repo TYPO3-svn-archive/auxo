@@ -23,50 +23,60 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  **/
  
-class tx_auxo_aui_formButton extends tx_auxo_aui_text {
+class tx_auxo_aui_formButton extends tx_auxo_aui_pushButton {
 
-	protected	$name;
-	protected	$content;
-
-	public function __construct($name, $content) {
-		parent::__construct($name, $text);		
-		$this->name = $name;
-		
-		if (is_object($content)) {
-			$this->image = $content;
-		}
-		else {
-			$this->text = $content;
-		}
-		
+	protected	$dependencies = array (
+					'button/assets/skins/sam/button.css',
+					'yahoo/yahoo.js',
+					'dom/dom.js',
+					'event/event.js',
+				    'element/element-beta.js',
+					'button/button.js' 
+				);
+					
+	
+	public function __construct($name, $label='', $value='') {
+		parent::__construct($name, $label, $value);		
 		$this->type = self::FORM_BUTTON;
 	}
 	
-	public function setText($text) {
-		$this->text = $text;
-	}
-	
-	public function getText() {
-		return $this->text;
-	}
-
-	public function setImage($image) {
-		$this->image = $image;
-	}
-	
-	public function getImage() {
-		return $this->image;
-	}
-		
-	public function	render() {
+	/**
+	 * Renders a form button
+	 *
+	 * @param tx_auxo_aui_renderer $renderer 
+ 	 * @return string $output
+	 */
+	public function	render(tx_auxo_aui_renderer $renderer) {				
+		// fill option array
 		$options['name'] = $this->name;
-		$options['type'] = 'submit';
+		$options['type'] = 'submit';			
+		if ($this->value) $options['value'] = $this->value;
 		
-		if ($this->image) $content = $this->image->render();
-		if ($this->text)  $content.= $this->text;
+		// render label
+		if ($this->image) $content = $this->image->render($renderer);
+		if ($this->text) $content.= $this->text;
+        
+		// render tooltip if used
+		if ($this->tooltip) {
+        	$this->tooltip->setParent($this->getId());
+        	$this->tooltip->renderer($renderer);	
+        }
+        
+		// register dependencies
+		$renderer->addDependencies($this->dependencies);
 		
-		$button = tx_auxo_aui_toolbox::renderTag($this, 'button', $options, $content);		
-		return tx_auxo_aui_toolbox::renderTag($this, 'span', array('class' => $this->getDefaultClass()), $button);
+		// render java script
+		$script = sprintf('function onButtonReady_%s() { oButton_%s = new YAHOO.widget.Button("%s"); }', 
+					$this->getId(),	
+					$this->getId(),
+					$this->getId());
+		$script.= sprintf('YAHOO.util.Event.onContentReady("%s", onButtonReady_%s);', 
+					$this->getId(),
+					$this->getId());
+
+		// renderer HTML markup
+		$renderer->addJavaSnippetsToBuffer($script);							
+		return $renderer->renderTag($this, 'button', $options, $content);
 	}
 }
 

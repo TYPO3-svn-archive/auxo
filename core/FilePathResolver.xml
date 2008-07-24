@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components>
+	<component id="FilePathResolver" class="tx_auxo_filePathResolver">
+		<argument name="home" value="." />
+		<argument name="log" ref="Logger" />
+		<argument name="locations">
+			<sets>
+				<set key="hier" value="abc" />
+				<set key="da" value="cdf" />				
+			</sets>
+		</argument>
+	</component>
+	<component id="Logger" class="tx_auxo_logger">
+		<argument name="serverity" value="normal" />	
+		<argument name="areas">
+			<hash>
+				<entry>core</entry>
+				<entry>controller</entry>
+				<entry>presentation</entry>
+			</hash>
+		</argument>
+	</component>
+</components>

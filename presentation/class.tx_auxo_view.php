@@ -30,7 +30,7 @@
  * Class that enables autoloading of all auxo classes.
  * 
  * @package auxo
- * @subpackage presentation
+ * @subpackage presentation layer
  * @author Andreas Horn <Andreas.Horn@extronaut.de>
  * @access public
  */
@@ -126,7 +126,7 @@ abstract class tx_auxo_view extends tx_auxo_arrayObject implements tx_auxo_exten
 		$this->setTemplatePath($path);
 		$this->setTemplate($snippet);
 		$content = $this->renderOutput();
-		tx_auxo_cache::add($cacheID, $content, 0, 'SNIPPET');
+		tx_auxo_cache::add($cacheID, $content, 'SNIPPET');
 		return $content;
 	}
 	

@@ -52,6 +52,6 @@ abstract class tx_auxo_aui_layout {
 		return $this->class;
 	}
 	
-	abstract public function render($items);	
+	abstract public function render(tx_auxo_aui_renderer $renderer, $items);	
 }
 ?>

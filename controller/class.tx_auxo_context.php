@@ -4,7 +4,8 @@
  * @subpackage core
  * @author Andreas Horn <Andreas.Horn@extronaut.de>
  * @copyright 2007
- * @version $WCREV$
+ * @version $Id$
+ * @scope singleton
  *
  * LICENSE:
  *
@@ -59,6 +60,16 @@
 		$this->services[$service] = $instance;
 	}
 	
+	/**
+	 * Checks if an service has been registered
+	 *
+	 * @param string $service name of a service
+	 * @return boolean $exit true if this service has been registered
+	 */
+	public function hasService($service) {
+		return $this->services[$service];
+	}
+	
   /**
    * tx_auxo_context::getService()
    *
@@ -90,6 +101,5 @@
 	public function setExtension($extension) {
 		$this->extension = $extension;
 	}	
-
  }
 ?>

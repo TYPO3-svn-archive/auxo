@@ -46,13 +46,19 @@ class tx_auxo_aui_checkbox extends tx_auxo_aui_HTMLcomponent {
 		$this->checked = true;
 	}
 	
-	public function	render() {
+	/**
+	 * Renders HTML output of this object
+	 *
+	 * @param tx_auxo_aui_renderer $renderer
+	 * @return unknown
+	 */
+	public function	render(tx_auxo_aui_renderer $renderer) {
 		$options['name'] = $this->name;
 		$options['value'] = $this->value;
 		$options['type'] = 'checkbox';
 		if ($this->isChecked()) $options['checked'] = 'checked';
-		$labelTag = tx_auxo_aui_toolbox::getTag('span', array('class' => $this->getDefaultClass() . '-label'), $this->label);
-		return tx_auxo_aui_toolbox::renderTag($this, 'input', $options) . $labelTag;
+		$labelTag = tx_auxo_aui_helper::getTag('span', array('class' => $this->getDefaultClass() . '-label'), $this->label);
+		return $renderer->renderTag($this, 'input', $options) . $labelTag;
 	}
 }
 

@@ -310,7 +310,7 @@ class tx_auxo_aui_geomap extends tx_auxo_aui_HTMLcomponent {
      *
      * @return 		string rendered control
      */
-	public function render()	{
+	public function render(tx_auxo_aui_renderer $renderer)	{
 		// Create map object and set properties
 		$map = $this->buildMap();
 

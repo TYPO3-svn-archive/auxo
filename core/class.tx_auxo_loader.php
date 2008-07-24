@@ -21,87 +21,89 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- **/
- 
-
-spl_autoload_register(array('tx_auxo_loader', 'load'));
-
+ **/ 
 class tx_auxo_loader {
 	
 	const CLASS_PREFIX = 'class.';
 	
-	static protected $classes = array();
+	protected $classes = array();
 	
 	/**
-	 * Add
-	 * 
+	 * Initials a Auto Loader
+	 */
+	public function __construct() {	
+		/* 
+		 * @todo this list should be placed in an configuration file or something 
+		 * to be more flexible.
+		 */
+		$this->add('EXT:div/.', false);
+		$this->add('EXT:lib/.', false);
+		// libraries
+		$this->add('EXT:auxo/core', 'php');
+		$this->add('EXT:auxo/controller', 'php');
+		$this->add('EXT:auxo/domain', 'php');
+		$this->add('EXT:auxo/presentation', 'php');	
+		$this->add('EXT:auxo/exceptions', 'php');
+		
+		// register an auto load method
+		spl_autoload_register(array($this, 'load'));				
+	}
+	
+	/**
 	 * Adds a path for auto loading of class files considering a comma separated list 
 	 * of file extensions. Please note, only class.* files are included and their classname
 	 * is determined based on its filename.
 	 *
-	 * @param string $path
-	 * @param string $extensionList
+	 * @param string $path adds a path to php include path
+	 * @param boolean $recursively traverse recursively $path and add all sub directories
 	 */
-	static public function add($path, $extensionList='php') {	
-		$fullpath = t3lib_div::getFileAbsFileName($path);
-		// TODO currently only files in this given directory are extracted but no deep 
-		//      search is performed.
-		$files = t3lib_div::getFilesInDir($fullpath, $extensionList, true); 
-		foreach ($files as $key => $file) {
-			// consider only class files
-			if (strncmp(basename($file), self::CLASS_PREFIX, 6) != 0) continue;
-			
-			if (!is_readable($file)) {
-				throw new tx_auxo_coreException(sprintf('code file %s can not be read', $file));
-			}
-
-			$className = str_replace('class.', '', basename($file));
-			$className = substr($className, 0, strrpos($className, '.'));
-			self::$classes[$className] = $file;
-		}
-	}
-	
-	/**
-	 * load a specific class
-	 *
-	 * @param boolean class has been loaded
-	 */	
-	static public function load($className) {
-		if (isset(self::$classes[$className])) {
-			require_once(self::$classes[$className]);
-			return true;
+	public function add($path, $recursively=true) {
+		$fullpath = t3lib_div::getFileAbsFileName($this->sanitizePath($path));
+		if (!is_readable($fullpath)) {
+			throw new tx_auxo_IOException(sprintf('directory %s can not be read', $fullpath));	
 		}
 		
-		return false;
+		$includePath = get_include_path() . $fullpath . ';';
+		
+		if ($recursively) {
+			$iterator = new DirectoryIterator($fullpath);
+			for($iterator->rewind(); $iterator->valid(); $iterator->next()) {
+	        	if ($iterator->isDir() && strncmp($iterator->getFilename(),'.', 1) != 0) {
+					if (!$iterator->isReadable()) {
+						throw new tx_auxo_IOException(sprintf('directory %s can not be read', $iterator->getPath()));
+					}	            
+					$directory = $this->sanitizePath($iterator->getPathname());
+					$includePath .= $directory . ';';            
+					$this->add($directory, true);
+	        	}
+	        }
+		}        
+
+        set_include_path($includePath);
 	}
 	
 	/**
-	 * Loads all registered classes
+	 * Cleans a path to unix-style
 	 *
-	 * @return void
+	 * @param string $path
+	 * @return string $unixPath
 	 */
-	static public function initialize() {
-		foreach (self::$classes as $className => $file) {
-			self::load($className);
-		}
+	private function sanitizePath($path) {
+		return str_replace('//', '/', str_replace('\\', '/', $path));
 	}
 	
 	/**
-	 * Create an instance of $className
+	 * Autoloader that loads a specific class
 	 *
-	 * @param string $className
-	 * @return object $instance
-	 */
-	static public function makeInstance($className) {
-		if (class_exists($className)) {
-			return new $className;	
+	 * @param string name of a class that has to be loaded
+	 */	
+	public function load($classname) {
+		if (substr($classname, 0, 3)=== 'tx_') {
+			$filename = 'class.' . $classname . '.php';
+			require_once($filename);
 		}
-		else {
-			echo $className.'does not exist';
-		}
-		return NULL;
 	}
-	
+		
 	/**
 	 * Returns an array of module directories
 	 *

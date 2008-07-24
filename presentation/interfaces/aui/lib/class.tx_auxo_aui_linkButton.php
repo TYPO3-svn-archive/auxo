@@ -24,53 +24,108 @@
  **/
  
 class tx_auxo_aui_linkButton extends tx_auxo_aui_text {
-	protected	$name;
 	protected	$content;
-
-	public function __construct($name, $content) {
-		parent::__construct($name, $text);		
-		$this->name = $name;
-		
+	protected	$dependencies = array();
+	
+	public function __construct($name, $content, $target='#') {
+		parent::__construct($name);		
+		$this->target = $target;
+				
 		if (is_object($content)) {
 			$this->image = $content;
 		}
 		else {
 			$this->text = $content;
 		}
-		
+
+		$this->dependencies = array (
+			'button/assets/skins/sam/button.css',
+			'yahoo/yahoo.js',
+			'dom/dom.js',
+		    'event/event.js',		
+		    'element/element-beta.js',
+			'button/button.js' 
+		);
+								
 		$this->type = self::LINK_BUTTON;
 	}
+
 	
+	/**
+	 * Sets a text for this button
+	 *
+	 * @param string $text
+	 */
 	public function setText($text) {
 		$this->text = $text;
 	}
 	
+	/**
+	 * Gets current text of this button
+	 *
+	 * @return unknown
+	 */
 	public function getText() {
 		return $this->text;
 	}
 
-	public function setImage($image) {
-		$this->image = $image;
+	/**
+	 * Sets an image (icon) for this button
+	 *
+	 * @param string $imagePath
+	 */
+	public function setImage($imagePath) {
+		$this->image = $imagePath;
 	}
-	
+	 
+	/**
+	 * get path of current set image (icon)
+	 *
+	 * @return string $imagePath
+	 */
 	public function getImage() {
 		return $this->image;
 	}
 		
-	public function	render() {
-		$options['name'] = $this->name;
-		
+	/**
+	 * Renders this UI elements
+	 *
+	 * @return	string	(X)HTML output
+	 */
+	public function	render(tx_auxo_aui_renderer $renderer) {
+		if ($this->name) {
+		    $options['name'] = $this->name;
+		}
 		if ($this->image) $content = $this->image->render();
 		if ($this->text)  $content.= $this->text;
-		
-		if (isset($this->events[self::MOUSE_CLICK])) {		   	
-			$button = tx_auxo_aui_toolbox::renderLink($content, $this->events[self::MOUSE_CLICK], 1);
-		}
-		else {
-			$button = tx_auxo_aui_toolbox::renderTag($this, 'div', $options, $content);
+
+		if (!$content) {
+			throw new tx_auxo_aui_noContentGivenException('Widget: Linkbutton');
 		}
 		
-		return tx_auxo_aui_toolbox::renderTag($this, 'span', array('class' => $this->getDefaultClass()), $button);
+		// render tooltip if used
+		if ($this->tooltip) {
+        	$renderedTooltip = $this->tooltip->render($renderer);	
+        }
+        else {
+        	$renderedTooltip = '';
+        }		
+		
+		// register dependencies
+		$renderer->addDependencies($this->dependencies);
+		
+		// java scripting
+		$script = sprintf('function onButtonReady_%s() { oButton_%s = new YAHOO.widget.Button("%s"); %s}', 
+					$this->getId(),
+				    $this->getId(),	
+					$this->getId(),
+					$renderedTooltip);
+		$script.= sprintf('YAHOO.util.Event.onContentReady("%s", onButtonReady_%s);', 
+					$this->getId(),
+					$this->getId());
+
+		$renderer->addJavaSnippetToBuffer($script);							
+		return $renderer->renderTag($this, 'a', array('href' => $renderer->renderURL($this->target)), $content);
 	}
 }
 

@@ -32,8 +32,8 @@ class tx_auxo_aui_scrollPanel extends tx_auxo_aui_panel {
 	protected	$width = 0;
 	protected 	$height = 0;
 	
-	public function __constructor($layout=NULL, $title='', $width=0, $height=0) {
-		parent::_construct($layout, $title);
+	public function __constructor($name='', $layout=NULL, $title='', $width=0, $height=0) {
+		parent::_construct($name, $layout, $title);
 		$this->width = $width;
 		$this->height = $height;
 	}
@@ -47,20 +47,20 @@ class tx_auxo_aui_scrollPanel extends tx_auxo_aui_panel {
 		$this->height = $height;
 	}
 	
-	public function render() {
+	public function render(tx_auxo_aui_renderer $renderer) {
 	    if ($this->$title) {
-	       $content = tx_auxo_aui_toolbox::renderTag($this, $this->style, array(), $this->title);
+	       $content = $renderer->renderTag($this, $this->style, array(), $this->title);
 	    }
 	    else {
 	       $content = '';
 	    }
 	    $options = array();
-		$content.= parent::render();
+		$content.= parent::render($renderer);
 		$style = 'overflow: scroll;';
 		if ($this->width) $style .= 'width:'.$this->width . ';';
 		if ($this->height) $style .= 'style:' . $this->height . ';';
 		if ($style) $options['style'] = $style;
-		return tx_auxo_aui_toolbox::renderTag($this, 'div', $options, $content);
+		return $renderer->renderTag($this, 'div', $options, $content);
 	}	
 }
 ?>

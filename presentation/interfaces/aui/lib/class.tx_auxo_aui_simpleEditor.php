@@ -27,10 +27,12 @@ class tx_auxo_aui_simpleEditor extends tx_auxo_aui_text {
 	
 	protected	$dependencies = array(
 			                       	 'editor/assets/skins/sam/simpleeditor.css', 
-		                             'yahoo-dom-event/yahoo-dom-event.js',
-		                             'element/element-beta-min.js',
-									 'container/container-core-min.js',
-		                             'editor/simpleeditor-beta-min.js'
+		                             'yahoo/yahoo.js',
+			                         'dom/dom.js',
+									 'event/event.js',
+		                             'element/element-beta.js',
+									 'container/container-core.js',
+		                             'editor/simpleeditor-beta.js'
 	                            );
 	protected	$name;
 	protected	$content;
@@ -42,14 +44,8 @@ class tx_auxo_aui_simpleEditor extends tx_auxo_aui_text {
 		$this->name = $name;
 		$this->height = '300px';
 		$this->width = '400px';
-		$this->text = $content;
-		
-		$this->yuiPath = t3lib_extmgm::extRelPath('auxo') . 'vendors/yui/build/';
+		$this->text = $content;		
 		$this->type = self::SIMPLE_EDITOR;
-	}
-	
-	public function getDependencies() {
-		return $this->dependencies;
 	}
 	
 	public function setHeight($height) {
@@ -67,32 +63,36 @@ class tx_auxo_aui_simpleEditor extends tx_auxo_aui_text {
 	public function getText() {
 		return $this->text;
 	}
-		
-	public function	render() {
+	
+	/**
+	 * Renders UI element "SimpleEditor"
+	 *
+	 * @return string XHTML 
+	 */
+	public function	render(tx_auxo_aui_renderer $renderer) {
 		$options['name'] = $this->name;
 		if ($this->text)  $content.= $this->text;
 
-		// needed stylesheets
-		tx_auxo_aui_toolbox::addStyleSheet($this->yuiPath . "editor/assets/skins/sam/simpleeditor.css");
-		// dependencies
-		tx_auxo_aui_toolbox::addHeaderScript($this->yuiPath . "yahoo-dom-event/yahoo-dom-event.js");
-		tx_auxo_aui_toolbox::addHeaderScript($this->yuiPath . "element/element-beta-min.js");
-		tx_auxo_aui_toolbox::addHeaderScript($this->yuiPath . "container/container-core-min.js");
-		tx_auxo_aui_toolbox::addHeaderScript($this->yuiPath . "editor/simpleeditor-beta-min.js");
 		// java scripting
-		$script = sprintf('function onEditorReady() { 
-		                        oEditor = new YAHOO.widget.SimpleEditor("%s", { 
+		$script = sprintf('function onEditorReady_%s() { 
+		                        oEditor_%s = new YAHOO.widget.SimpleEditor("%s", { 
 				                                 height: "%s", 
 				                                 width: "%s", 
 				                                 dompath: true 
 	                                          }); 
-		                        oEditor.render(); 
-	                       }', $this->getId(), '300px', '300px');
-		$script.= sprintf('YAHOO.util.Event.onContentReady("%s", onEditorReady);', $this->getId() );
-		tx_auxo_aui_toolbox::addJavaScript($script);		
+		                        oEditor_%s.render(); 
+	                       }', 
+		                   $this->getId(), $this->getId(), $this->getId(), 
+		                   $this->height, $this->width,
+		                   $this->getId());
+		$script.= sprintf('YAHOO.util.Event.onContentReady("%s", onEditorReady_%s);', 
+		                   $this->getId(),
+		                   $this->getId());		                   
 		
-		$widget = tx_auxo_aui_toolbox::renderTag($this, 'textarea', array(), $content);
-        return tx_auxo_aui_toolbox::getTag('div', array('class'=>'yui-skin-sam'), $widget);
+		$renderer->addJavaSnippetToBuffer($script);				
+		$renderer->addDependencies($this->dependencies);
+		// render widget
+		return $renderer->renderTag($this, 'textarea', $options, $content);
 	}
 }
 

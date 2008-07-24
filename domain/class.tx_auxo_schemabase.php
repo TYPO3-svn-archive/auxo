@@ -338,9 +338,5 @@ class tx_auxo_schemabase extends tx_lib_object {
 		$relation = tx_auxo_relation::getInstance($kind, $this, $table, $association, $options);		
 		$this->relations[$table][$association] = $relation;
 	}		
- }
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/auxo/class.tx_auxo_schemabase.php']){
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/auxo/class.tx_auxo_schemabase.php']);
 }
 ?>

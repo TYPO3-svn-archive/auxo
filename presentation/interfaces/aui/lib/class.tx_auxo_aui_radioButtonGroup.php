@@ -45,15 +45,15 @@ class tx_auxo_aui_radioButtonGroup extends tx_auxo_aui_HTMLcontainer {
 		return $this->title;
 	}
 	
-	public function render() {
+	public function render(tx_auxo_aui_renderer $renderer) {
 	    if ($this->$title) {
-	       $content = tx_auxo_aui_toolbox::renderTag($this->style, array(), $this->title);
+	       $content = $renderer->renderTag($this->style, array(), $this->title);
 	    }
 	    else {
 	       $content = '';
 	    }
-		$content.= parent::render($this->items);
-		return tx_auxo_aui_toolbox::renderTag('div', array(), $content);
+		$content.= parent::render($renderer, $this->items);
+		return $renderer->renderTag('div', array(), $content);
 	}	
 }
 ?>

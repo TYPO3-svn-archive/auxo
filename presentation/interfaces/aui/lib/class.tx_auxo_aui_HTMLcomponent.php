@@ -1,28 +1,36 @@
 <?php
+/*                                                                        *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
+ *                                                                        *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *	
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        */	
+
 /**
  * @package auxo
- * @subpackage 
- * @author Andreas Horn <Andreas.Horn@extronaut.de>
- * @copyright 2007
- * @version $Version$
- *
- * LICENSE:
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- **/
- 
+ * @subpackage presentation
+ * @version $Id$
+ */
+
+/**	
+ * AUI Abstract Component 
+ * 
+ * This class represents an abstract UI component. All components have to extend this
+ * class to implement a concrete component e.g. input fields, etc.
+ * 
+ * @package auxo
+ * @subpackage presentation
+ * @version $Id$	
+ * @copyright Copyright belongs to the respective authors
+ * @author andreas.horn@extronaut.de
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
 abstract class tx_auxo_aui_HTMLcomponent {
 
 	const	AUXO_AUI_PREFIX = 'tx-auxo-aui';
@@ -46,12 +54,14 @@ abstract class tx_auxo_aui_HTMLcomponent {
 	const	IMAGE = 'image';
 	const   GEOMAP = 'geomap';
 	const	SIMPLE_EDITOR = 'simple-editor';
+	const	TOOLTIP = 'tooltip';
 			
 	protected $id = NULL;
 	protected $class = NULL;
 	protected $name = NULL;
 	protected $type;
 	protected $container;
+	protected $tooltip = NULL;
 	
 	public function __construct($name='') {
 		$this->name = $name;
@@ -82,6 +92,36 @@ abstract class tx_auxo_aui_HTMLcomponent {
 		$this->class = $class;
 	}
 	
+	 
+	/**
+	 * Returns the current tooltip of this widget
+	 *
+	 * @return tx_auxo_aui_tooltip $tooltip tooltip object
+	 */
+	public function getTooltip() {
+		return $this->tooltip;
+	}
+	
+	/**
+	 * Defines a tooltip for this widget either as tooltip object 
+	 * or as string
+	 *
+	 * @param mixed $tooltip tooltip object or string
+	 * @throws tx_auxo_aui_unexpectedElement
+	 */
+	public function setTooltip($tooltip) {
+		if ($tooltip instanceof tx_auxo_aui_tooltip) {
+ 		    $this->tooltip = $tooltip;		
+		}
+		elseif (is_string($tooltip)) {
+			$this->tooltip = new tx_auxo_aui_tooltip($tooltip);
+		}
+		else {
+			throw new tx_auxo_aui_unexpectedElementException('setTooltip: expects either string or a tooltip instance');
+		}
+		$this->tooltip->attachTo($this);		
+	}	
+	
 	/**
 	 * Returns classname of this component
 	 *
@@ -104,7 +144,7 @@ abstract class tx_auxo_aui_HTMLcomponent {
 		return self::AUXO_AUI_PREFIX . '-' . $this->getType();
 	}
 	
-	abstract function render();
+	abstract function render(tx_auxo_aui_renderer $renderer);
 }
 
 ?>

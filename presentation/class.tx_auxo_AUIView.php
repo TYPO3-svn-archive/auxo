@@ -24,6 +24,20 @@
  **/
  
 class tx_auxo_AUIview extends tx_auxo_view {
+	
+	protected	$YUIpath;
+	protected	$YUItheme;
+	
+	/**
+	 * Builds a AUI view representation
+	 *
+	 * @param string $theme name of YUI theme
+	 * @return void
+	 */
+	public function __construct( $module, $action, $viewname, $theme = 'yui-skin-sam') {
+		parent::__construct($module, $action, $viewname);
+		$this->YUItheme = $theme;
+	}	
 
 	/**
 	 * Sets a template path
@@ -65,11 +79,12 @@ class tx_auxo_AUIview extends tx_auxo_view {
 	/**
 	 * Render the PHP template and return the output as string.
 	 *
-	 * @return	string		typically an (x)html string
+	 * @return	string	typically an (x)html string
 	 */
 	public function render() {
 		$fullpath = $this->getTemplatePath() . '/' . $this->getTemplate();
-		
+		$renderer = new tx_auxo_aui_renderer();
+			
 		if (!is_readable($fullpath)) {
 			throw new tx_auxo_presentationException(sprintf('Template file %s is missing', $fullpath));
 		}
@@ -80,24 +95,36 @@ class tx_auxo_AUIview extends tx_auxo_view {
 		if (!class_exists($templateClassName)) {
 			throw new tx_auxo_presentationException(sprintf('Template file %s does not class %s', $this->getTemplate(), $templateClassName));
 		}
-				
+		// trigger initial rendering activities
+		$renderer->preProcessing();
+
+		// create view instance
 		$instance = new $templateClassName();
 
 		if (!$instance instanceof tx_auxo_aui_template) {
 			throw new tx_auxo_presentationException(sprintf('Class %s->build() does not return container', get_class($this)));
 		}
 		
+		// map data to view
 		$instance->exchangeArray($this->getData());
+		
+		// build runtime presentation
 		$container = $instance->build();
 		
 		if (!$container || !is_object($container)) {
 			throw new tx_auxo_presentationException('no container returned by build()');
 		}
 		
-		//TODO: detect dependencies
-		$container->getIterator();
-
-		return $container->render();
-	}
+		// include basic stylesheets
+		$renderer->addDependencies(array('reset/reset.css', 'fonts/fonts.css', 'grids/grids.css'));
+				
+		// render all UI elements of this collection
+		$container->render($renderer);
+		
+		// trigger post processing activities
+		$renderer->postProcessing();
+				
+		return tx_auxo_aui_helper::getTag('div', array('class' => $this->YUItheme), $container->render($renderer));
+	}	
 }
 ?>

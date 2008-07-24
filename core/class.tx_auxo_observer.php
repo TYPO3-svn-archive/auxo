@@ -1,10 +1,10 @@
 <?php
 /**
  * @package 	auxo
- * @subpackage 	util
+ * @subpackage 	core
  * @author 		Andreas Horn <Andreas.Horn@extronaut.de>
  * @copyright 	2007
- * @version 	$WCREV$
+ * @version 	$Id$
  *
  * LICENSE:
  *
@@ -26,20 +26,22 @@
 /**
  * Observer
  *
- * This interface is used to implement and observer/observable pattern.
- * It is used mainly in model classes.
+ * This interface is used to implement and observer/observable pattern. 
+ * A class implementing this interface will be triggered by an observed instance
+ * via a listen method about an event.
  *
  * @package auxo
- * @subpackage util
+ * @subpackage core
  * @author Andreas Horn
  * @access public
  */
- 
 interface tx_auxo_observer {
+	/**
+	 * Listen to events of an observed instance
+	 *
+	 * @param string $event name of an event
+	 * @param object $object observed instance 
+	 */
  	public function listen($event, $object);	
-}
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/auxo/class.tx_auxo_observer.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/auxo/class.tx_auxo_observer.php']);
 }
 ?>

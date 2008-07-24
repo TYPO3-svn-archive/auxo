@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components>
+	<!-- Configuration -->
+	<component id="Configuration" class="tx_auxo_Configuration" loading="eager" />
+	
+	<!-- Cache -->
+	<component id="Cache" class="tx_auxo_cache">
+		<argument name="LifeSpan" value="10000" />
+	</component>
+</components>

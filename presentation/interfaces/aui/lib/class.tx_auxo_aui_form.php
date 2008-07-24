@@ -25,7 +25,7 @@
  
 class tx_auxo_aui_form extends tx_auxo_aui_HTMLcontainer {
 	/**
-	 *
+	 * @var $title
 	 */	
 	protected	$title;
 	protected	$titleStyle;
@@ -77,11 +77,17 @@ class tx_auxo_aui_form extends tx_auxo_aui_HTMLcontainer {
 		$this->decorator = $decorator;
 	}
 	
-	public function render() {
+	/**
+	 * Renders a presentation of this UI element
+	 *
+	 * @param tx_auxo_aui_renderer $renderer
+	 * @return string $rendered output
+	 */
+	public function render(tx_auxo_aui_renderer $renderer) {
 		// add title bar if required
 		if ($this->title) {
 	    	$options['class'] = $this->getDefaultClass() . '-title';
-	        $content = tx_auxo_aui_toolbox::renderTag($this, $this->titleStyle, $options, $this->title);
+	        $content = $renderer->renderTag($this, $this->titleStyle, $options, $this->title);
 	    	unset($options);
 		}
 		
@@ -98,19 +104,22 @@ class tx_auxo_aui_form extends tx_auxo_aui_HTMLcontainer {
 			}
 		}
 		// render container items
-		$content .= parent::renderItems($this->items);
+		$content .= parent::renderItems($renderer, $this->items);
 		
 		// render hidden fields
   		if (isset($hiddens)) {
   		    foreach($hiddens as $hidden) {
-  		    	$content .= $hidden->render();
+  		    	$content .= $hidden->render($renderer);
   		    }
   		}
-		$options['method'] = key($this->events);
-		$options['action'] = tx_auxo_aui_toolbox::generateURL();
+		
+  		$options['method'] = key($this->events);
+		$options['action'] = tx_auxo_aui_helper::generateURL();
 		$options['name'] = $this->name;
+		
 		if ($this->charset) $options['accept-charset'] = $this->charset;
-		return parent::render(tx_auxo_aui_toolbox::renderTag($this, 'form', $options, $content));
+
+		return parent::render($renderer, $renderer->renderTag($this, 'form', $options, $content));
 	}
 }
 ?>

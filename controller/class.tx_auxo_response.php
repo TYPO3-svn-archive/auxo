@@ -33,6 +33,17 @@
 	protected $action = '';
 	protected $module = '';
 
+	/**
+	 * Builds an instance that represents an web reponse 
+	 *
+	 */
+	public function __construct() {
+	   $this->context = tx_auxo_context::getInstance();	
+	   $this->configuration = $this->context->getService('configuration'); 
+	   $this->controller = $this->context->getService('controller'); 
+	}
+	
+	
  	/**
 	 * Generates an URL with given parameters
 	 *
@@ -52,25 +63,11 @@
         }
         $url->noHash();
         return t3lib_div::locationHeaderUrl($url->makeURL($htmlspecial));		
-	}
-		
-	public function __construct() {
-	   $this->context = tx_auxo_context::getInstance();	
-	   $this->configuration = $this->context->getService('configuration'); 
-	   $this->controller = $this->context->getService('controller'); 
-	}
-
-   /**
-     * method		addJSlibrary
-     *
-     * @param 	string	$path
-     */
-    public function addJSlibrary($path) {
-        $this->addHeaderScript($path);
-    }
+	}	
+	
 	
   /**
-   * tx_auxo_view::addHeaderScript()
+   * Adds a script or coding to the HTML header of the current response
    *
    * @param string $path
    * @param string $code
@@ -79,43 +76,96 @@
    */
 	public function addHeaderScript($path='', $code='', $type='text/javascript') {
 		if ($path) {
-	        $scriptPath = t3lib_extMgm::siteRelPath($this->controller->getExtension()).$path;      	      	
-	      	$identifier = $this->controller->getExtension().'_'.basename($path);
-	      	$options['src'] = $scriptPath;
+	      	$options['src'] = $path;
+	      	$code = ' ';
  		}
       	$options['type'] = $type;
-      	$GLOBALS['TSFE']->additionalHeaderData[$identifier] = addTag('script', $options, $code);
+      	$GLOBALS['TSFE']->additionalHeaderData[$this->controller->getExtension()].= tx_auxo_aui_helper::getTag('script', $options, $code);
 	}  
 	
+	
+	/**
+	 * Adds an external stylesheet to the HTML Header
+	 *
+	 * @param string $path
+	 * @param string $media
+	 */
+	public function addStyleSheet($path, $media='') { 	      	
+	    $options['href'] = $path;
+	    $options['type'] = 'text/css';
+	    $options['rel']  = 'stylesheet';
+	    if ($media) $options['media'] = $media;
+      	
+      	$GLOBALS['TSFE']->additionalHeaderData[$this->controller->getExtension()].= tx_auxo_aui_helper::getTag('link', $options);
+	}
 		
+		
+	/**
+	 * Defines current module and action
+	 *
+	 * @param string $module
+	 * @param string $action
+	 */
 	public function setModuleAction($module, $action) {
 		$this->module = $module;
 		$this->action = $action;
 	}
 	
+	/**
+	 * Returns name of current module
+	 *
+	 * @return string $module module name
+	 */
 	public function getModule() {
 		return $this->module;
 	}
 	
+	/**
+	 * Returns name of current action
+	 *
+	 * @return string $action action name
+	 */
 	public function getAction() {
 		return $this->action;
 	}
 	
+	/**
+	 * Sets content of response
+	 *
+	 * @param string $content content
+	 */
 	public function setContent($content) {
 		$this->content = $content;
 	}
 	
+	
+	/**
+	 * Returns current context of this response
+	 *
+	 * @return string $content
+	 */
 	public function getContent() {
 		return $this->content;
 	}
 	
+	
+	/**
+	 * Sets name of current view
+	 *
+	 * @param string $viewname name of current view
+	 */
 	public function setView($viewname) {
 		$this->viewname = $viewname;
 	}
+
 	
+	/**
+	 * Returns name of current view
+	 *
+	 * @return string $viewname name of current view
+	 */
 	public function getView() {
 		return $this->viewname;
 	}
 }
-
 ?>

@@ -1,11 +1,13 @@
 <?php
 
 /**
+ * A Router
+ * 
  * @package auxo
- * @subpackage general
+ * @subpackage controller
  * @author Andreas Horn
  * @copyright 2007
- * @version $WCREV$
+ * @version $id$
  * @access public
  */
 
